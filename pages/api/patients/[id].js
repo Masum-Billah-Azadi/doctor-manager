@@ -1,5 +1,5 @@
 // pages/api/patients/[id].js
-import { dbConnect } from '@/lib/dbConnect';
+import dbConnect from '@/lib/dbConnect';
 import Patient from '@/models/Patient';
 
 export default async function handler(req, res) {
