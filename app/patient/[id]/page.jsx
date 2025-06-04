@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from 'next/link';
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function PatientDetailsPage() {
   const { id } = useParams();
@@ -22,6 +23,7 @@ export default function PatientDetailsPage() {
       <p><strong>Name:</strong> {patient.name}</p>
       <p><strong>Age:</strong> {patient.age}</p>
       <p><strong>Condition:</strong> {patient.condition}</p>
+      <Link href={`/patient/${id}/edit`}><button>Edit Patient</button></Link>
     </div>
   );
 }

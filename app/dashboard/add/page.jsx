@@ -33,7 +33,6 @@ export default function AddPatientPage() {
       if (res.ok) {
         alert('Patient added successfully');
         setForm({ name: '', age: '', gender: '', phone: '', address: '' });
-        router.push('/dashboard');
       } else {
         alert(data.error || 'Failed to add patient');
       }
