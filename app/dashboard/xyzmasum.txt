@@ -1,0 +1,8 @@
+grate now i see patient data.now we design full deshbord.i thik you know what the design.please help me make that doctor dashbord.
+can we make 3 defferent component? like:- 
+1.Doctor profile (profile picture,name,phone or email and logout ,edit button)
+2.Patients List(Last added patient top of the list. patient number,patient name. if doctor click this patien filde then open this patient profile.then doctor edit,delete or update her patient information)
+3.search and Add New Patient button(this redirect add patient page we already make this page).
+then marge this 3 component into doctor deshbord 1.left Columm 2.Middle Column 3.Right Column..
+
+if anything you need to know about design just tell me. again thanks you

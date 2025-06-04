@@ -1,18 +1,17 @@
 'use client';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function AddPatientPage() {
+  const { data: session } = useSession();
   const [form, setForm] = useState({
     name: '',
     age: '',
     gender: '',
-    contact: '',
+    phone: '',
     address: '',
-    medicalHistory: '',
   });
-
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,31 +19,119 @@ export default function AddPatientPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('../../api/patients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
+    setLoading(true);
 
-    if (res.ok) {
-      router.push('/dashboard');
-    } else {
-      alert('Failed to add patient');
+    try {
+      const res = await fetch('../../api/patients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Patient added successfully');
+        setForm({ name: '', age: '', gender: '', phone: '', address: '' });
+        router.push('/dashboard');
+      } else {
+        alert(data.error || 'Failed to add patient');
+      }
+    } catch (err) {
+      alert('Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: '0 auto', padding: 20 }}>
+    <div className="add-patient-container">
       <h1>Add New Patient</h1>
-      <form onSubmit={handleSubmit}>
-        <input name="name" placeholder="Name" onChange={handleChange} required /><br />
-        <input name="age" placeholder="Age" type="number" onChange={handleChange} required /><br />
-        <input name="gender" placeholder="Gender" onChange={handleChange} required /><br />
-        <input name="contact" placeholder="Contact" onChange={handleChange} required /><br />
-        <input name="address" placeholder="Address" onChange={handleChange} required /><br />
-        <textarea name="medicalHistory" placeholder="Medical History" onChange={handleChange} required /><br />
-        <button type="submit">Add Patient</button>
+      <form onSubmit={handleSubmit} className="form">
+        <input
+          type="text"
+          name="name"
+          placeholder="Patient Name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="number"
+          name="age"
+          placeholder="Age"
+          value={form.age}
+          onChange={handleChange}
+          required
+        />
+        <select name="gender" value={form.gender} onChange={handleChange} required>
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone Number"
+          value={form.phone}
+          onChange={handleChange}
+          required
+        />
+        <textarea
+          name="address"
+          placeholder="Address"
+          value={form.address}
+          onChange={handleChange}
+          required
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Saving...' : 'Add Patient'}
+        </button>
       </form>
+
+      <style jsx>{`
+        .add-patient-container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 2rem;
+        }
+        h1 {
+          text-align: center;
+          margin-bottom: 1.5rem;
+        }
+        .form {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        input, select, textarea {
+          padding: 0.8rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 1rem;
+        }
+        textarea {
+          resize: vertical;
+          min-height: 80px;
+        }
+        button {
+          padding: 0.8rem;
+          font-size: 1rem;
+          background-color: #0070f3;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        button:disabled {
+          background-color: #999;
+        }
+        @media (max-width: 600px) {
+          .add-patient-container {
+            padding: 1rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }
