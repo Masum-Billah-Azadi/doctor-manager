@@ -1,9 +1,12 @@
 'use client';
+
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AddPatientPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [form, setForm] = useState({
     name: '',
     age: '',
@@ -22,7 +25,7 @@ export default function AddPatientPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('../../api/patients', {
+      const res = await fetch('/api/patients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -31,13 +34,14 @@ export default function AddPatientPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert('Patient added successfully');
-        setForm({ name: '', age: '', gender: '', phone: '', address: '' });
+        alert('✅ Patient added successfully!');
+        router.push('/dashboard'); // Redirect to dashboard
       } else {
-        alert(data.error || 'Failed to add patient');
+        alert(data.error || '❌ Failed to add patient.');
       }
     } catch (err) {
-      alert('Something went wrong');
+      console.error('Add Patient Error:', err);
+      alert('❌ Something went wrong. Try again.');
     } finally {
       setLoading(false);
     }
@@ -84,7 +88,7 @@ export default function AddPatientPage() {
           required
         />
         <button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : 'Add Patient'}
+          {loading ? 'Saving...' : '➕ Add Patient'}
         </button>
       </form>
 

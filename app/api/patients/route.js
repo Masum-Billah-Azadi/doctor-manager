@@ -12,10 +12,10 @@ export async function POST(req) {
   await dbConnect();
 
   const { name, age, gender, phone, address } = await req.json();
-  const doctorEmail = session.user.email;
+  const doctorId = session.user.id;
 
   // Find the current max patientNumber for this doctor
-  const lastPatient = await Patient.findOne({ doctorEmail }).sort({ patientNumber: -1 });
+  const lastPatient = await Patient.findOne({ doctorId }).sort({ patientNumber: -1 });
   const nextPatientNumber = lastPatient ? lastPatient.patientNumber + 1 : 1;
 
   const newPatient = new Patient({
@@ -24,7 +24,7 @@ export async function POST(req) {
     gender,
     phone,
     address,
-    doctorEmail,
+    doctorId,
     patientNumber: nextPatientNumber,
   });
 
@@ -41,6 +41,6 @@ export async function GET(req) {
 
   await dbConnect();
 
-  const patients = await Patient.find({ doctorEmail: session.user.email }).sort({ patientNumber: 1 });
+  const patients = await Patient.find({ doctorId: session.user.id }).sort({ patientNumber: 1 });
   return new Response(JSON.stringify(patients), { status: 200 });
 }

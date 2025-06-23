@@ -9,7 +9,7 @@ export default function PatientList() {
   const router = useRouter();
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (session?.user?.id) {
       fetch(`/api/patients`)
         .then((res) => res.json())
         .then((data) => setPatients(data.reverse())); // show latest first

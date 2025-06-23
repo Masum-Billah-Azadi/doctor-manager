@@ -7,13 +7,13 @@ import { NextResponse } from "next/server";
 export async function GET(req, context) {
   await dbConnect();
   const session = await getServerSession(authOptions);
-  const { id } = await context.params;
+  const id = (await context.params).id;
 
   if (!session) return new Response("Unauthorized", { status: 401 });
 
   const patient = await Patient.findOne({
     _id: id,
-    doctorEmail: session.user.email,
+    doctorId: session.user.id,
   });
 
   if (!patient) return new Response("Patient not found", { status: 404 });
@@ -24,27 +24,26 @@ export async function GET(req, context) {
 export async function DELETE(req, context) {
   await dbConnect();
   const session = await getServerSession(authOptions);
-  const { id } = await context.params;
+  const id = (await context.params).id;
 
   if (!session) return new Response("Unauthorized", { status: 401 });
 
-  await Patient.findOneAndDelete({ _id: id, doctorEmail: session.user.email });
+  await Patient.findOneAndDelete({ _id: id, doctorId: session.user.id });
 
   return new Response("Patient deleted", { status: 200 });
 }
 
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
   await dbConnect();
-
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = params;
+  const id = (await context.params).id;
   const data = await req.json();
 
   try {
     const updatedPatient = await Patient.findOneAndUpdate(
-      { _id: id, doctorEmail: session.user.email },
+      { _id: id, doctorId: session.user.id },
       data,
       { new: true }
     );

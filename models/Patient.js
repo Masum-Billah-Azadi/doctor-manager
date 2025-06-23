@@ -11,7 +11,7 @@ const patientSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  doctorEmail: { type: String, required: true }, // link to doctor
+  doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: true },// link to doctor
   patientNumber: { type: Number, required: true }, // auto-incremented per doctor
 });
 
