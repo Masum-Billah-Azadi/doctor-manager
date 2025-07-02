@@ -17,7 +17,7 @@ export default function DoctorProfile() {
       <p>{session.user.phone || session.user.email}</p>
       <button onClick={() => signOut()}>Logout</button>
       <br />
-      <a href="/edit-profile">
+      <a href="/dashboard/edit-doctor">
         <button>Edit Profile</button>
       </a>
     </div>
