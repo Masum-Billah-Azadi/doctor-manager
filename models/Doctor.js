@@ -6,6 +6,7 @@ const doctorSchema = new mongoose.Schema({
   image: String,
   address: String,
   phone: { type: String, default: null },
+  password: { type: String, required: true },
 });
 
 const Doctor = mongoose.models.Doctor || mongoose.model("Doctor", doctorSchema);
