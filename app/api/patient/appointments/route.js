@@ -8,19 +8,22 @@ export async function GET() {
   try {
     await dbConnect();
 
-    // token থেকে patient বের করা
     const cookieStore = await cookies();
     const token = cookieStore.get("patient_token")?.value;
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const payload = jwt.verify(token, process.env.PATIENT_JWT_SECRET);
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.PATIENT_JWT_SECRET);
+    } catch {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    // patient এর সব appointment খুঁজে আনা
-    const appts = await Appointment.find({ patientUser: payload.id })
-      .populate("doctor", "name specialization")  // ডাক্তার নামও আনা
-      .sort({ date: -1 });  // latest আগে
+    const appts = await Appointment.find({ patientUser: payload.pid })
+      .populate("doctor", "name phone email") // আপনার Doctor স্কিমা অনুযায়ী
+      .sort({ date: -1 });
 
-    return NextResponse.json({ appointments: appts });
+    return NextResponse.json({ appointments: appts }, { status: 200 });
   } catch (e) {
     console.error("Fetch appointments failed:", e);
     return NextResponse.json({ error: "Fetch failed" }, { status: 500 });

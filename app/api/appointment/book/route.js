@@ -8,31 +8,42 @@ import { cookies } from "next/headers";
 export async function POST(req) {
   try {
     await dbConnect();
-    const body = await req.json();
-    const { doctorId, reason, preferredDateTime } = body;
+    const { doctorId, reason, preferredDateTime } = await req.json();
 
-    // ✅ patient token বের করা
+    if (!doctorId) {
+      return NextResponse.json({ error: "doctorId required" }, { status: 400 });
+    }
+
+    // token থেকে patient বের করা
     const cookieStore = await cookies();
     const token = cookieStore.get("patient_token")?.value;
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const payload = jwt.verify(token, process.env.PATIENT_JWT_SECRET);
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.PATIENT_JWT_SECRET);
+    } catch {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    // ✅ patient user নিশ্চিত করা
-    const patient = await PatientUser.findById(payload.id);
+    const patient = await PatientUser.findById(payload.pid);
     if (!patient) return NextResponse.json({ error: "Patient not found" }, { status: 404 });
 
-    // ✅ appointment create করা
-    const appt = new Appointment({
+    // date validate
+    const date = preferredDateTime ? new Date(preferredDateTime) : null;
+    if (!date || isNaN(date.getTime())) {
+      return NextResponse.json({ error: "Invalid or missing date" }, { status: 400 });
+    }
+
+    const appt = await Appointment.create({
       doctor: doctorId,
-      patientUser: patient._id,   // 👈 এখানে পাঠানো হচ্ছে
-      reason,
-      date: preferredDateTime,    // 👈 Appointment model-এ field নাম `date`
+      patientUser: patient._id,
+      reason: reason ?? "",
+      date,
+      status: "pending",
     });
 
-    await appt.save();
-
-    return NextResponse.json({ ok: true, appointment: appt });
+    return NextResponse.json({ ok: true, appointment: appt }, { status: 201 });
   } catch (e) {
     console.error("Booking failed:", e);
     return NextResponse.json({ error: "Booking failed" }, { status: 500 });
