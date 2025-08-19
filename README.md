@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 Next i add srarch function 
+=======
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+>>>>>>> 73417577dec493477156b1aa73d13ac556e62453
 ## Getting Started
 
 First, run the development server:
