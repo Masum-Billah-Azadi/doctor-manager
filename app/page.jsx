@@ -11,9 +11,6 @@ export default function HomePage() {
   useEffect(() => {
     if (status === 'authenticated') {
       router.push('/dashboard');
-    // } else if (status === 'unauthenticated') {
-    //   router.push('/login');
-    // }
     }
   }, [status, router]);
 
@@ -22,12 +19,15 @@ export default function HomePage() {
       <div className="overlay">
         <h1>Welcome to DoctorCare</h1>
         <p>Your secure and smart way to manage patients.</p>
-        <a href="/login" className="login-btn">Get Started</a>
+        <div className="btn-group">
+          <a href="/login" className="login-btn">Get Started</a>
+          <a href="/appointments" className="appointment-btn">Book Appointment</a>
+        </div>
       </div>
 
       <style jsx>{`
         .homepage {
-          background-image: url('/bg-home.jpg'); /* Put your image in public/bg-home.jpg */
+          background-image: url('/bg-home.jpg');
           background-size: cover;
           background-position: center;
           height: 100vh;
@@ -40,7 +40,7 @@ export default function HomePage() {
         }
 
         .overlay {
-          background: rgba(0, 0, 0, 0.5); /* Dark overlay for text readability */
+          background: rgba(0, 0, 0, 0.5);
           color: white;
           padding: 2rem;
           border-radius: 12px;
@@ -56,7 +56,14 @@ export default function HomePage() {
           margin-bottom: 2rem;
         }
 
-        .login-btn {
+        .btn-group {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+        }
+
+        .login-btn,
+        .appointment-btn {
           background: #00bcd4;
           padding: 0.75rem 1.5rem;
           border-radius: 8px;
@@ -66,7 +73,8 @@ export default function HomePage() {
           transition: background 0.3s ease;
         }
 
-        .login-btn:hover {
+        .login-btn:hover,
+        .appointment-btn:hover {
           background: #0097a7;
         }
 
@@ -74,9 +82,11 @@ export default function HomePage() {
           h1 {
             font-size: 2rem;
           }
-
           p {
             font-size: 1rem;
+          }
+          .btn-group {
+            flex-direction: column;
           }
         }
       `}</style>
